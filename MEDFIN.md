@@ -9,7 +9,7 @@ binaries. The Medfin monorepo installs them with mise and never builds Rust:
 
 ```toml
 [tools]
-"github:Medfin-AI/tlx" = "0.1.0"
+"github:Medfin-AI/tlx" = "0.1.1"
 ```
 
 The upstream README and docs are unchanged; read them for how tlx works.
@@ -17,9 +17,9 @@ The upstream README and docs are unchanged; read them for how tlx works.
 ## Releases
 
 `.github/workflows/release.yml` builds `tlx` for macOS on Apple silicon and for Linux on
-x86_64 and arm64, then publishes one archive per platform and a `SHA256SUMS` file. The
-Linux binaries link against glibc 2.17, so they run on Ubuntu 24.04 and Amazon Linux 2023
-alike.
+x86_64 and arm64, then publishes one archive per platform and a `SHA256SUMS` file, with a
+build provenance attestation for each archive. The Linux binaries link against glibc 2.17,
+so they run on Ubuntu 24.04 and Amazon Linux 2023 alike.
 
 To cut a release:
 
@@ -40,4 +40,8 @@ Only the files below differ from upstream. List any fix to upstream's code here,
 reason.
 
 - `MEDFIN.md`: this file.
-- `.github/workflows/release.yml`: the release workflow.
+- `.github/workflows/release.yml`: the release workflow. It also attests each archive's
+  build provenance, so `gh attestation verify <archive> --repo Medfin-AI/tlx` and mise
+  can check that this repository's workflow built it.
+- `Cargo.toml` and `Cargo.lock`: the workspace version is 0.1.1, the first release with
+  attestations. Upstream's code is unchanged since 0.1.0.

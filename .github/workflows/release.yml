@@ -105,11 +105,21 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
+      # Signing and storing the build provenance attestations.
+      id-token: write
+      attestations: write
     steps:
+      # The archives the build jobs of this run uploaded.
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: tlx-*
           merge-multiple: true
+
+      # Records which workflow run and commit built each archive. mise checks
+      # these on install, and `gh attestation verify` checks them by hand.
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: tlx-*.tar.gz
 
       - name: Write checksums
         run: sha256sum tlx-*.tar.gz > SHA256SUMS && cat SHA256SUMS
